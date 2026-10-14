@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="horizontal"
+    android:padding="48dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingEnd="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Playlist"
+            android:textColor="@color/text"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="M3U playlist URL"
+            android:textColor="@color/muted"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/urlInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card"
+            android:imeOptions="actionDone"
+            android:inputType="textUri"
+            android:padding="14dp"
+            android:singleLine="true"
+            android:textColor="@color/text"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_button"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Save &amp; load"
+                android:textAllCaps="false"
+                android:textColor="@color/text" />
+
+            <Button
+                android:id="@+id/btnDefault"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_button"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Use default"
+                android:textAllCaps="false"
+                android:textColor="@color/text" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Or send it from your phone"
+            android:textColor="@color/text"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/qr"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/white"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/link"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:textColor="@color/muted"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>
