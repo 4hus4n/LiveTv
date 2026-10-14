@@ -3,8 +3,8 @@ package com.ahusan.livetv
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -42,9 +42,20 @@ class SettingsActivity : ComponentActivity() {
         urlInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) { save(urlInput.text.toString()); true } else false
         }
-        findViewById<Button>(R.id.btnSave).setOnClickListener { save(urlInput.text.toString()) }
-        findViewById<Button>(R.id.btnDefault).setOnClickListener { save(DEFAULT_PLAYLIST) }
-        findViewById<Button>(R.id.btnSave).requestFocus()
+        findViewById<View>(R.id.btnSave).setOnClickListener { save(urlInput.text.toString()) }
+        findViewById<View>(R.id.btnDefault).setOnClickListener { save(DEFAULT_PLAYLIST) }
+
+        val previewBtn = findViewById<TextView>(R.id.btnPreview)
+        fun showPreviewState() {
+            previewBtn.text = if (prefs.livePreview) "On" else "Off"
+        }
+        showPreviewState()
+        previewBtn.setOnClickListener {
+            prefs.livePreview = !prefs.livePreview
+            showPreviewState()
+        }
+
+        findViewById<View>(R.id.btnSave).requestFocus()
     }
 
     override fun onStart() {

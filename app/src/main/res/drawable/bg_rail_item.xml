@@ -2,14 +2,14 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_focused="true">
         <shape android:shape="rectangle">
-            <corners android:radius="8dp" />
+            <corners android:radius="23dp" />
             <solid android:color="@color/accent" />
         </shape>
     </item>
     <item android:state_activated="true">
         <shape android:shape="rectangle">
-            <corners android:radius="8dp" />
-            <solid android:color="@color/card_focus" />
+            <corners android:radius="23dp" />
+            <solid android:color="@color/accent_soft" />
         </shape>
     </item>
     <item>

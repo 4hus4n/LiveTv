@@ -12,16 +12,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.OptIn
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
-import coil.load
 
 @OptIn(UnstableApi::class)
 class PlayerActivity : ComponentActivity() {
@@ -34,14 +29,18 @@ class PlayerActivity : ComponentActivity() {
     private lateinit var infoNumber: TextView
     private lateinit var infoName: TextView
     private lateinit var infoGroup: TextView
-    private lateinit var infoStar: TextView
+    private lateinit var infoNext: TextView
+    private lateinit var infoStar: ImageView
     private lateinit var infoLogo: ImageView
+    private lateinit var infoInitials: TextView
 
     private var player: ExoPlayer? = null
     private var index = 0
     private var triedHls = false
     private val handler = Handler(Looper.getMainLooper())
-    private val hideInfo = Runnable { info.visibility = View.GONE }
+    private val hideInfo = Runnable {
+        info.animate().alpha(0f).setDuration(300).withEndAction { info.visibility = View.GONE }.start()
+    }
     private val startPending = Runnable { startCurrent(false) }
 
     private val channels get() = Session.playList
@@ -65,8 +64,10 @@ class PlayerActivity : ComponentActivity() {
         infoNumber = findViewById(R.id.infoNumber)
         infoName = findViewById(R.id.infoName)
         infoGroup = findViewById(R.id.infoGroup)
+        infoNext = findViewById(R.id.infoNext)
         infoStar = findViewById(R.id.infoStar)
         infoLogo = findViewById(R.id.infoLogo)
+        infoInitials = findViewById(R.id.infoInitials)
     }
 
     override fun onStart() {
@@ -101,23 +102,14 @@ class PlayerActivity : ComponentActivity() {
                 return
             }
             // Many IPTV links are HLS without ".m3u8" in the URL – retry as HLS once.
-            if (!triedHls && guessMime(channels[index].url) == null) {
+            if (!triedHls && Streams.guessMime(channels[index].url) == null) {
                 startCurrent(true)
                 return
             }
             spinner.visibility = View.GONE
-            errorText.text = "Channel not available\n(${error.errorCodeName})"
+            errorText.text = "This channel isn't available right now\nPress OK to retry · ▲▼ to change channel"
             errorText.visibility = View.VISIBLE
             showInfo()
-        }
-    }
-
-    private fun guessMime(url: String): String? {
-        val u = url.lowercase().substringBefore('?')
-        return when {
-            u.endsWith(".m3u8") || u.contains(".m3u8") -> MimeTypes.APPLICATION_M3U8
-            u.endsWith(".mpd") -> MimeTypes.APPLICATION_MPD
-            else -> null
         }
     }
 
@@ -129,22 +121,7 @@ class PlayerActivity : ComponentActivity() {
         spinner.visibility = View.VISIBLE
         Session.index = index
         Session.lastPlayedKey = ch.key
-
-        val props = HashMap(ch.headers)
-        ch.referrer?.let { props["Referer"] = it }
-        val dataSource = DefaultHttpDataSource.Factory()
-            .setUserAgent(ch.userAgent ?: DEFAULT_UA)
-            .setAllowCrossProtocolRedirects(true)
-            .setConnectTimeoutMs(15_000)
-            .setReadTimeoutMs(20_000)
-            .setDefaultRequestProperties(props)
-
-        val item = MediaItem.Builder().setUri(ch.url)
-        val mime = if (forceHls) MimeTypes.APPLICATION_M3U8 else guessMime(ch.url)
-        if (mime != null) item.setMimeType(mime)
-
-        val source = DefaultMediaSourceFactory(dataSource).createMediaSource(item.build())
-        p.setMediaSource(source)
+        p.setMediaSource(Streams.source(ch, forceHls))
         p.prepare()
         p.playWhenReady = true
     }
@@ -163,19 +140,24 @@ class PlayerActivity : ComponentActivity() {
 
     private fun showInfo() {
         val ch = channels[index]
-        infoNumber.text = (index + 1).toString()
+        infoNumber.text = "CH ${index + 1}"
         infoName.text = ch.name
         infoGroup.text = ch.group
         infoStar.visibility = if (prefs.isFav(ch)) View.VISIBLE else View.GONE
-        if (!ch.logo.isNullOrBlank()) {
-            infoLogo.visibility = View.VISIBLE
-            infoLogo.load(ch.logo)
+        if (channels.size > 1) {
+            val prev = channels[(index - 1).mod(channels.size)].name
+            val next = channels[(index + 1).mod(channels.size)].name
+            infoNext.text = "▲  $prev        ▼  $next"
         } else {
-            infoLogo.visibility = View.GONE
+            infoNext.text = ""
         }
+        showLogo(infoLogo, infoInitials, ch)
+
+        info.animate().cancel()
+        info.alpha = 1f
         info.visibility = View.VISIBLE
         handler.removeCallbacks(hideInfo)
-        handler.postDelayed(hideInfo, 4000)
+        handler.postDelayed(hideInfo, 4500)
     }
 
     private fun toggleFav() {
@@ -183,7 +165,7 @@ class PlayerActivity : ComponentActivity() {
         val added = prefs.toggleFav(ch)
         Toast.makeText(
             this,
-            if (added) "★ Added to favourites" else "Removed from favourites",
+            if (added) "Added to favourites" else "Removed from favourites",
             Toast.LENGTH_SHORT
         ).show()
         showInfo()

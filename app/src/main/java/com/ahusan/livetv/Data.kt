@@ -45,6 +45,10 @@ class Prefs(context: Context) {
         get() = sp.getString("last_group", null)
         set(value) = sp.edit().putString("last_group", value).apply()
 
+    var livePreview: Boolean
+        get() = sp.getBoolean("live_preview", true)
+        set(value) = sp.edit().putBoolean("live_preview", value).apply()
+
     fun isFav(ch: Channel) = ch.key in favs
 
     fun hasFavs() = favs.isNotEmpty()
