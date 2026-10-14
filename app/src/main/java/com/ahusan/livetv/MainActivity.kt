@@ -59,6 +59,16 @@ class MainActivity : ComponentActivity() {
     private var previewTriedHls = false
     private val previewRunnable = Runnable { startPreview(false) }
 
+    private var pendingGroup: String? = null
+    private val applyGroup = Runnable {
+        val g = pendingGroup ?: return@Runnable
+        pendingGroup = null
+        if (g != currentGroup || channelAdapter.itemCount == 0) {
+            groupAdapter.select(g)
+            showGroup(g)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -83,9 +93,15 @@ class MainActivity : ComponentActivity() {
         heroLive.visibility = View.INVISIBLE
         heroGroup.visibility = View.INVISIBLE
 
+        CrashLog.install(this)
+        CrashLog.showIfAny(this)
+
+        // Switching category is posted (never run inside a focus/layout pass) and
+        // debounced, so scrolling fast through categories doesn't reload every one.
         groupAdapter = GroupAdapter { g ->
-            groupAdapter.select(g)
-            showGroup(g)
+            pendingGroup = g
+            handler.removeCallbacks(applyGroup)
+            handler.postDelayed(applyGroup, 180)
         }
         groupsView.layoutManager = LinearLayoutManager(this)
         groupsView.adapter = groupAdapter
@@ -112,14 +128,23 @@ class MainActivity : ComponentActivity() {
         }
         if (returningFromPlayer) {
             returningFromPlayer = false
-            // Favourites may have changed in the player
-            if (currentGroup == GROUP_FAV) showGroup(GROUP_FAV) else channelAdapter.notifyDataSetChanged()
-            focusChannel(Session.lastPlayedKey)
+            // Posted so it runs after Android restores focus/layout, not during it.
+            channelsView.post {
+                // Favourites may have changed in the player
+                if (currentGroup == GROUP_FAV) {
+                    showGroup(GROUP_FAV)
+                } else {
+                    // Rebind in place (keeps the focused tile) instead of rebuilding the list
+                    channelAdapter.notifyItemRangeChanged(0, channelAdapter.itemCount)
+                }
+                focusChannel(Session.lastPlayedKey)
+            }
         }
     }
 
     override fun onStop() {
         super.onStop()
+        handler.removeCallbacks(applyGroup)
         releasePreview()
     }
 
@@ -196,6 +221,7 @@ class MainActivity : ComponentActivity() {
     private fun showGroup(g: String) {
         currentGroup = g
         prefs.lastGroup = g
+        stopPreview()
         val list = channelsFor(g)
         channelAdapter.submit(list)
         channelsView.scrollToPosition(0)

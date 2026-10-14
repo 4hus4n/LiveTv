@@ -59,12 +59,25 @@ class GroupAdapter(private val onSelect: (String) -> Unit) :
         notifyDataSetChanged()
     }
 
+    private var recycler: RecyclerView? = null
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        recycler = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        recycler = null
+    }
+
+    /** Updates the highlight on the visible rows directly – no adapter notify, so it's safe mid-scroll. */
     fun select(g: String) {
-        val old = items.indexOf(selected)
         selected = g
-        if (old >= 0) notifyItemChanged(old)
-        val now = items.indexOf(g)
-        if (now >= 0) notifyItemChanged(now)
+        val rv = recycler ?: return
+        for (i in 0 until rv.childCount) {
+            val child = rv.getChildAt(i)
+            val p = rv.getChildAdapterPosition(child)
+            if (p != RecyclerView.NO_POSITION) child.isActivated = items[p] == g
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
