@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' file: data: blob: http: https:; img-src * data: blob:; media-src * blob: data:; connect-src *; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; worker-src blob: 'self' file:">
+  <title>Live TV</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></symbol>
+  <symbol id="i-star-o" viewBox="0 0 24 24"><path fill="currentColor" d="m22 9.24-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><path fill="currentColor" d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><path fill="currentColor" d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path fill="currentColor" d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.47.47 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58a6.9 6.9 0 0 0 0 1.88l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16a6.47 6.47 0 0 0 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06A9 9 0 0 0 14 3.23z"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0 0 21 12a9 9 0 0 0-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></symbol>
+  <symbol id="i-unfull" viewBox="0 0 24 24"><path fill="currentColor" d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 108 108"><path fill="#3FA9F5" d="M22 34h64a6 6 0 0 1 6 6v36a6 6 0 0 1-6 6H22a6 6 0 0 1-6-6V40a6 6 0 0 1 6-6z"/><path fill="#0E1116" d="m47 46 16 12-16 12z"/><path fill="#3FA9F5" d="M40 88h28v4H40z"/><path stroke="#3FA9F5" stroke-width="3" d="M44 34 34 22M64 34l10-12"/></symbol>
+</svg>
+
+<!-- ============ HOME ============ -->
+<div id="home">
+  <aside class="rail">
+    <div class="brand"><svg><use href="#i-logo"/></svg><span>Live TV</span></div>
+    <div class="rail-label">Categories</div>
+    <nav id="groups" class="groups"></nav>
+    <div class="rail-sep"></div>
+    <button class="ri" id="btnReload"><svg><use href="#i-refresh"/></svg><span>Reload</span></button>
+    <button class="ri" id="btnSettings"><svg><use href="#i-gear"/></svg><span>Settings</span></button>
+  </aside>
+
+  <main class="content">
+    <section class="hero">
+      <div class="hero-text">
+        <div class="chips"><span class="live" id="heroLive">● LIVE</span><span class="chip" id="heroGroup"></span></div>
+        <h1 id="heroName">Loading channels</h1>
+        <div class="muted" id="heroMeta"></div>
+        <div class="hint">Click to watch &nbsp;·&nbsp; ★ or right-click to favourite</div>
+      </div>
+      <div class="preview" id="previewBox">
+        <span class="ini big" id="heroInitials"></span>
+        <img id="heroLogo" alt="">
+        <video id="previewVideo" muted playsinline></video>
+        <svg class="hero-star" id="heroStar"><use href="#i-star"/></svg>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <h2 id="groupTitle"></h2>
+      <div class="spinner small" id="loading"></div>
+      <span class="muted" id="status"></span>
+      <label class="search">
+        <svg><use href="#i-search"/></svg>
+        <input id="search" type="search" placeholder="Search channels" spellcheck="false">
+      </label>
+    </div>
+
+    <div id="empty" class="empty"></div>
+    <div id="grid" class="grid"></div>
+  </main>
+</div>
+
+<!-- ============ PLAYER ============ -->
+<div id="player" class="hidden">
+  <video id="video" playsinline></video>
+  <div class="spinner" id="pSpinner"></div>
+  <div class="p-error hidden" id="pError">
+    <div class="p-error-title">This channel isn't available right now</div>
+    <div class="muted">It may be offline or blocked in your region.</div>
+    <div class="p-error-actions">
+      <button class="pill" id="btnRetry">Retry</button>
+      <button class="pill ghost" id="btnNextCh">Next channel</button>
+    </div>
+  </div>
+  <div class="p-number hidden" id="pNumber"></div>
+
+  <div class="p-top" id="pTop">
+    <button class="icon-btn" id="btnBack" title="Back (Esc)"><svg><use href="#i-back"/></svg></button>
+  </div>
+
+  <div class="p-bottom" id="pBottom">
+    <div class="p-row">
+      <span class="live">● LIVE</span>
+      <span class="chip" id="pNum"></span>
+      <span class="chip" id="pGroup"></span>
+      <span class="grow"></span>
+      <span class="clock" id="pClock"></span>
+    </div>
+    <div class="p-row p-main">
+      <div class="p-logo"><span class="ini" id="pInitials"></span><img id="pLogo" alt=""></div>
+      <div class="p-info">
+        <div class="p-title"><span id="pName"></span><svg class="p-star" id="pStar"><use href="#i-star"/></svg></div>
+        <div class="muted" id="pNext"></div>
+      </div>
+      <div class="p-controls">
+        <button class="icon-btn" id="btnPrev" title="Previous channel (↑)"><svg><use href="#i-up"/></svg></button>
+        <button class="icon-btn" id="btnNext" title="Next channel (↓)"><svg><use href="#i-down"/></svg></button>
+        <button class="icon-btn" id="btnFav" title="Favourite (S)"><svg><use href="#i-star-o"/></svg></button>
+        <button class="icon-btn" id="btnMute" title="Mute (M)"><svg><use href="#i-vol"/></svg></button>
+        <input type="range" id="vol" min="0" max="1" step="0.05" title="Volume">
+        <button class="icon-btn" id="btnList" title="Channel list (L)"><svg><use href="#i-list"/></svg></button>
+        <button class="icon-btn" id="btnFull" title="Fullscreen (F)"><svg><use href="#i-full"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="p-panel hidden" id="pPanel">
+    <div class="p-panel-head"><span>Channels</span><button class="icon-btn small" id="btnPanelClose"><svg><use href="#i-close"/></svg></button></div>
+    <div class="p-panel-list" id="pPanelList"></div>
+  </aside>
+</div>
+
+<!-- ============ SETTINGS ============ -->
+<div id="settings" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>Settings</h2>
+      <button class="icon-btn small" id="btnSettingsClose"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <div class="field">
+      <div class="field-title">Playlist URL</div>
+      <div class="muted">Link to an M3U playlist</div>
+      <input id="urlInput" type="url" spellcheck="false">
+      <div class="err hidden" id="urlErr">Enter a link starting with http:// or https://</div>
+      <div class="row">
+        <button class="pill" id="btnSave">Save and load</button>
+        <button class="pill ghost" id="btnDefault">Use default</button>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <div class="field row between">
+      <div>
+        <div class="field-title">Live preview</div>
+        <div class="muted">Play the channel you hover, muted, at the top of the list</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="previewToggle"><span></span></label>
+    </div>
+    <div class="sep"></div>
+    <div class="keys">
+      <div class="field-title">Keyboard</div>
+      <div class="keys-grid">
+        <kbd>↑ ↓</kbd><span>Change channel</span>
+        <kbd>0–9</kbd><span>Go to channel number</span>
+        <kbd>F</kbd><span>Fullscreen</span>
+        <kbd>M</kbd><span>Mute</span>
+        <kbd>S</kbd><span>Favourite</span>
+        <kbd>L</kbd><span>Channel list</span>
+        <kbd>Ctrl F</kbd><span>Search</span>
+        <kbd>Esc</kbd><span>Back</span>
+      </div>
+    </div>
+    <div class="muted version" id="version"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="../node_modules/hls.js/dist/hls.min.js"></script>
+<script src="../node_modules/mpegts.js/dist/mpegts.js"></script>
+<script src="../node_modules/dashjs/dist/dash.all.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

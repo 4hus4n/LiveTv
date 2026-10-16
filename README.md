@@ -28,3 +28,11 @@ Every push to `main` builds the APK with GitHub Actions and publishes it under *
 
 ## Build locally
 Open in Android Studio, or run `./gradlew assembleRelease` (JDK 17, Android SDK 35).
+
+## Windows version
+The `windows/` folder is the same app for Windows PCs and laptops (Electron).
+
+- **Download:** Releases → `windows-v…` → `LiveTV-Setup-….exe` (installer) or `LiveTV-Portable-….exe` (no install).
+- Mouse: click a channel to watch, ★ or right-click to favourite, double-click video for fullscreen, scroll for volume.
+- Keys: ↑ ↓ change channel · 0–9 channel number · F fullscreen · M mute · S favourite · L channel list · Ctrl F search · Esc back.
+- Build locally: `cd windows && npm install && npm start` (run) or `npm run dist` (make the .exe).

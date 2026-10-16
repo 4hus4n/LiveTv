@@ -6,3 +6,6 @@ local.properties
 .DS_Store
 captures/
 .cxx/
+windows/node_modules/
+windows/dist/
+!windows/build/
